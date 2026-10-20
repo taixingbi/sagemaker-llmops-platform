@@ -1,0 +1,85 @@
+name: training
+
+# GPU training costs money — default to manual dispatch only.
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Target environment
+        required: true
+        default: dev
+        type: choice
+        options: [dev, prod]
+      start_execution:
+        description: Start pipeline after upsert
+        required: true
+        default: true
+        type: boolean
+
+permissions:
+  id-token: write
+  contents: read
+
+concurrency:
+  group: sagemaker-training-${{ github.event.inputs.environment || 'dev' }}
+  cancel-in-progress: false
+
+env:
+  AWS_REGION: ${{ vars.AWS_REGION || 'us-east-1' }}
+  AWS_ROLE_ARN: ${{ vars.AWS_ROLE_ARN }}
+
+jobs:
+  upsert-and-run:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment || 'dev' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: pip install -r requirements-ci.txt
+
+      - name: Configure AWS (OIDC)
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: ${{ env.AWS_ROLE_ARN }}
+          role-session-name: gha-sagemaker-training
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Resolve Terraform outputs
+        id: tf
+        working-directory: infrastructure/terraform
+        run: |
+          set -euo pipefail
+          ENV="${{ github.event.inputs.environment }}"
+          ACCOUNT="$(aws sts get-caller-identity --query Account --output text)"
+          STATE_BUCKET="llm-finetune-tfstate-${ACCOUNT}"
+          terraform init -reconfigure \
+            -backend-config="bucket=${STATE_BUCKET}" \
+            -backend-config="key=environments/${ENV}/terraform.tfstate" \
+            -backend-config="region=${AWS_REGION}"
+          echo "role=$(terraform output -raw sagemaker_execution_role_arn)" >> "$GITHUB_OUTPUT"
+          echo "bucket=$(terraform output -raw artifacts_bucket)" >> "$GITHUB_OUTPUT"
+          echo "pipeline=$(terraform output -raw pipeline_name)" >> "$GITHUB_OUTPUT"
+
+      - name: Upload sample data
+        env:
+          ARTIFACTS_BUCKET: ${{ steps.tf.outputs.bucket }}
+        run: ./scripts/upload_sample_data.sh ${{ github.event.inputs.environment }}
+
+      - name: Upsert pipeline
+        env:
+          SAGEMAKER_ROLE_ARN: ${{ steps.tf.outputs.role }}
+          ARTIFACTS_BUCKET: ${{ steps.tf.outputs.bucket }}
+          GITHUB_SHA: ${{ github.sha }}
+        run: python scripts/upsert_pipeline.py --env ${{ github.event.inputs.environment }}
+
+      - name: Start pipeline execution
+        if: ${{ github.event.inputs.start_execution == 'true' }}
+        run: |
+          aws sagemaker start-pipeline-execution \
+            --pipeline-name "${{ steps.tf.outputs.pipeline }}" \
+            --pipeline-execution-display-name "gha-${GITHUB_SHA::8}"

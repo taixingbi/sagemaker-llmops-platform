@@ -1,0 +1,20 @@
+{"instruction": "Translate to French", "input": "Hello", "output": "Bonjour"}
+{"instruction": "Translate to French", "input": "Good morning", "output": "Bonjour"}
+{"instruction": "Translate to Spanish", "input": "Thank you", "output": "Gracias"}
+{"instruction": "Summarize", "input": "The cat sat on the mat and slept.", "output": "A cat slept on a mat."}
+{"instruction": "Answer briefly", "input": "What is 2+2?", "output": "4"}
+{"instruction": "Rewrite politely", "input": "Send me the file now.", "output": "Could you please send me the file?"}
+{"instruction": "Translate to German", "input": "Good night", "output": "Gute Nacht"}
+{"instruction": "Extract keywords", "input": "Machine learning pipelines automate training.", "output": "machine learning, pipelines, training"}
+{"instruction": "Classify sentiment", "input": "I love this product!", "output": "positive"}
+{"instruction": "Classify sentiment", "input": "This is terrible.", "output": "negative"}
+{"instruction": "Answer briefly", "input": "Capital of France?", "output": "Paris"}
+{"instruction": "Summarize", "input": "Rain fell all day; streets flooded downtown.", "output": "Heavy rain caused downtown flooding."}
+{"instruction": "Translate to French", "input": "See you later", "output": "À plus tard"}
+{"instruction": "Rewrite politely", "input": "Fix this bug immediately.", "output": "Please prioritize fixing this bug."}
+{"instruction": "Answer briefly", "input": "How many legs does a dog have?", "output": "4"}
+{"instruction": "Translate to Spanish", "input": "Goodbye", "output": "Adiós"}
+{"instruction": "Extract keywords", "input": "SageMaker hosts training and inference jobs.", "output": "SageMaker, training, inference"}
+{"instruction": "Classify sentiment", "input": "It works fine.", "output": "neutral"}
+{"instruction": "Summarize", "input": "Teams shipped the MVP after six weeks of platform work.", "output": "MVP shipped after six weeks."}
+{"instruction": "Answer briefly", "input": "Color of the sky on a clear day?", "output": "Blue"}

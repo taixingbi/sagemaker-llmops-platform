@@ -1,0 +1,8 @@
+{"instruction": "Translate to French", "input": "Hello world", "output": "Bonjour le monde"}
+{"instruction": "Answer briefly", "input": "What is 3+5?", "output": "8"}
+{"instruction": "Classify sentiment", "input": "Amazing experience!", "output": "positive"}
+{"instruction": "Summarize", "input": "The model passed quality gates and entered the registry.", "output": "Model passed gates and was registered."}
+{"instruction": "Rewrite politely", "input": "Give me access today.", "output": "Could you please grant me access today?"}
+{"instruction": "Translate to Spanish", "input": "Please", "output": "Por favor"}
+{"instruction": "Extract keywords", "input": "Canary deployments reduce release risk.", "output": "canary, deployments, release risk"}
+{"instruction": "Answer briefly", "input": "How many days in a week?", "output": "7"}

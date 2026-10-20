@@ -1,0 +1,7 @@
+# CI + pipeline authoring (CPU only — no torch/GPU)
+# Pin SDK v2: v3 removed sagemaker.workflow / classic Pipeline APIs.
+boto3>=1.35.0
+sagemaker>=2.232.0,<3
+PyYAML>=6.0.1
+pytest>=8.0.0
+jsonschema>=4.22.0

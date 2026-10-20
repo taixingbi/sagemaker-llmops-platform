@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+.terraform/
+*.egg-info/
+dist/
+build/
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+*.swp
+
+# Terraform
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars.local
+crash.log
+.terraform.lock.hcl.backup
+
+# Secrets / local env
+.env
+.env.*
+*.pem
+credentials.json
+
+# Artifacts
+artifacts/
+outputs/
+*.tar.gz
+checkpoints/
+
+# SageMaker local mode
+ml/

@@ -1,0 +1,52 @@
+name: release
+
+# Week 4+: promote an approved Model Registry version → staging → canary.
+on:
+  workflow_dispatch:
+    inputs:
+      model_package_arn:
+        description: Model package ARN to promote
+        required: true
+        type: string
+      environment:
+        description: Target environment
+        required: true
+        default: prod
+        type: choice
+        options: [dev, prod]
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: ${{ vars.AWS_REGION || 'us-east-1' }}
+  AWS_ROLE_ARN: ${{ vars.AWS_ROLE_ARN }}
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: pip install -r requirements-ci.txt
+
+      - name: Configure AWS (OIDC)
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: ${{ env.AWS_ROLE_ARN }}
+          role-session-name: gha-sagemaker-release
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Promote (stub)
+        env:
+          MODEL_PACKAGE_ARN: ${{ github.event.inputs.model_package_arn }}
+        run: |
+          echo "Week 4 stub — wire deployment/promote.py here"
+          python deployment/promote.py --model-package-arn "$MODEL_PACKAGE_ARN" --dry-run
