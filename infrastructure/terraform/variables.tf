@@ -28,7 +28,7 @@ variable "github_org" {
 variable "github_repo" {
   type        = string
   description = "GitHub repository name (without org)"
-  default     = "sagemaker-finetuning-platform"
+  default     = "sagemaker-llmops-platform"
 }
 
 variable "budget_limit_usd" {
@@ -47,4 +47,22 @@ variable "manage_github_oidc_provider" {
   type        = bool
   description = "Create the GitHub OIDC provider. Set false if the account already has token.actions.githubusercontent.com"
   default     = true
+}
+
+variable "allow_local_sts_assume" {
+  type        = bool
+  description = "Also allow sts:AssumeRole into the GitHub Actions role (local CLI). Root cannot AssumeRole — needs an IAM user."
+  default     = true
+}
+
+variable "create_local_operator_user" {
+  type        = bool
+  description = "Create a least-privilege IAM user whose only job is sts:AssumeRole into the GHA/operator role"
+  default     = true
+}
+
+variable "local_assume_principals" {
+  type        = list(string)
+  description = "Extra IAM principals allowed to sts:AssumeRole the GHA role (in addition to the operator user if created)"
+  default     = []
 }

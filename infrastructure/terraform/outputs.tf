@@ -9,8 +9,24 @@ output "sagemaker_execution_role_arn" {
 }
 
 output "github_actions_role_arn" {
-  description = "Set this as GitHub Actions variable AWS_ROLE_ARN"
+  description = "Set this as GitHub Actions variable AWS_ROLE_ARN; also used by local sts:AssumeRole"
   value       = aws_iam_role.github_actions.arn
+}
+
+output "operator_user_name" {
+  description = "IAM user for local STS AssumeRole (not root)"
+  value       = try(aws_iam_user.operator[0].name, null)
+}
+
+output "operator_access_key_id" {
+  description = "Access key for operator user — configure AWS profile llmops-base"
+  value       = try(aws_iam_access_key.operator[0].id, null)
+}
+
+output "operator_secret_access_key" {
+  description = "Secret for operator user (sensitive — store in ~/.aws/credentials, never commit)"
+  value       = try(aws_iam_access_key.operator[0].secret, null)
+  sensitive   = true
 }
 
 output "ecr_training_repository_url" {

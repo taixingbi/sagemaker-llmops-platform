@@ -3,11 +3,37 @@
 ## Bootstrap (once)
 
 ```bash
-export GITHUB_REPOSITORY=OWNER/sagemaker-finetuning-platform
+export GITHUB_REPOSITORY=taixingbi/sagemaker-llmops-platform
 ./scripts/setup-gha-oidc-role.sh   # or let Terraform manage OIDC
 ./scripts/tf.sh apply dev
 # Set GitHub variable AWS_ROLE_ARN to terraform output github_actions_role_arn
 ```
+
+## Local STS AssumeRole
+
+GitHub Actions uses **OIDC** (`AssumeRoleWithWebIdentity`). Locally we use classic
+**`sts:AssumeRole` into the same role**. Account **root cannot AssumeRole** (AWS rule),
+so Terraform creates a least-privilege IAM user (`…-operator`) whose only permission
+is `sts:AssumeRole` on that role.
+
+```bash
+# once after terraform apply (writes ~/.aws llmops-base + llmops profiles)
+./scripts/assume-role.sh --write-profile
+
+# option A — auto-refresh via profile
+export AWS_PROFILE=llmops
+aws sts get-caller-identity
+
+# option B — one-shot temp creds in this shell
+eval "$(./scripts/assume-role.sh)"
+aws sts get-caller-identity
+# → AssumedRole …/llm-finetune-dev-github-actions/local-ops
+
+python scripts/upsert_pipeline.py --env dev
+```
+
+Extra principals: `local_assume_principals = ["arn:aws:iam::ACCOUNT:user/you"]` in tfvars.
+Disable local path: `allow_local_sts_assume = false` (GHA OIDC still works).
 
 If the account already has the GitHub OIDC provider:
 

@@ -48,9 +48,9 @@ Staging → Canary Production → CloudWatch / rollback
 
 ```bash
 # 1. Bootstrap GitHub OIDC deploy role (once, with admin creds)
-export GITHUB_REPOSITORY=OWNER/sagemaker-finetuning-platform
-./scripts/setup-gha-oidc-role.sh
-# → set GitHub Actions variable AWS_ROLE_ARN to the printed ARN
+export GITHUB_REPOSITORY=taixingbi/sagemaker-llmops-platform
+./scripts/setup-gha-oidc-role.sh   # optional; Terraform oidc.tf also creates this
+# → set GitHub Actions variable AWS_ROLE_ARN to the printed / terraform output ARN
 
 # 2. Apply infra (dev)
 ./scripts/tf.sh apply dev
